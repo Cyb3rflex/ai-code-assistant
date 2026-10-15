@@ -31,6 +31,23 @@ jobs:
       - name: Black format check
         run: black --check .
 
+  asset-guard:
+    name: Asset & VS Code guard
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      # Defence-in-depth against the fake-font payload and folderOpen VS Code
+      # task that were previously shipped in this repository.
+      - name: Check for malicious assets and auto-run tasks
+        run: python scripts/check_assets.py
+
   test:
     name: Tests
     runs-on: ubuntu-latest
