@@ -1,4 +1,4 @@
-# AI Code Assistant
+# A Code Assistant
 
 AI-powered developer workspace for GitHub repos, project intelligence, code review, and team collaboration.
 
@@ -22,7 +22,7 @@ Most AI tools stop at chat. Real development happens across repositories, files,
 
 ```bash
 # 1. Clone the project
-git clone https://github.com/AyinkxLab/ai-code-assistant.git
+git clone https://github.com/AyindxLab/ai-code-assistant.git
 cd ai-code-assistant
 
 # 2. Create a virtual environment
@@ -65,7 +65,8 @@ Open http://localhost:5000 in your browser.
 - [Architecture](docs/architecture.md)
 - [Security model](docs/security.md)
 - [Soroban workflow guide](docs/soroban-workflow.md)
-- [Roadmap](https://github.com/AyinkxLab/ai-code-assistant/issues)
+- [Observability](docs/observability.md)
+- [Roadmap](https://github.com/AyindxLab/ai-code-assistant/issues)
 
 ## License
 
