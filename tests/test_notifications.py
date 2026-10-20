@@ -172,14 +172,6 @@ class TestMembershipNotifications:
 
 
 class TestBudgetAlertDeduplication:
-    def setup_method(self):
-        # Threshold-delivery wiring is tracked separately (#470). Until the
-        # service lands, skip these tests instead of failing every suite.
-        pytest.importorskip(
-            "app.services.budget_alerts",
-            reason="budget threshold alert delivery lands with #470",
-        )
-
     def test_repeated_crossings_alert_once_per_period(self, app, make_user):
         from app.services.budget_alerts import check_budget_alerts
 

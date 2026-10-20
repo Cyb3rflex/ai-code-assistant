@@ -91,3 +91,51 @@ def test_digest_summarizes_usage():
     service.send_digest(user_id="u5", recipient="u5@local")
     assert len(sender.sent) == 1
     assert sender.sent[0][0] == "u5@local"
+
+
+def test_email_alert_uses_fake_transport():
+    class _FakeEmail:
+        def __init__(self) -> None:
+            self.messages: list[tuple[str, str, str]] = []
+
+        def send_email(self, recipient: str, subject: str, body: str) -> None:
+            self.messages.append((recipient, subject, body))
+
+    email = _FakeEmail()
+    sender = _Recorder()
+    service = alerts.AlertService(sender=sender.send, email_sender=email.send_email)
+    service.set_threshold(user_id="u6", amount=10, recipient="u6@local")
+
+    service.record_usage(user_id="u6", amount=20)
+
+    assert len(email.messages) == 1
+    recipient, subject, body = email.messages[0]
+    assert recipient == "u6@local"
+    assert "u6" in subject or "u6" in body
+    assert sender.sent == []
+
+
+def test_email_failure_falls_back_to_in_app():
+    class _BrokenEmail:
+        def send_email(self, recipient: str, subject: str, body: str) -> None:
+            raise OSError("SMTP unavailable")
+
+    email = _BrokenEmail()
+    sender = _Recorder()
+    service = alerts.AlertService(sender=sender.send, email_sender=email.send_email)
+    service.set_threshold(user_id="u7", amount=1, recipient="u7@local")
+
+    service.record_usage(user_id="u7", amount=10)
+
+    assert len(sender.sent) == 1
+    assert sender.sent[0][0] == "u7@local"
+
+
+def test_email_unset_does_not_crash():
+    sender = _Recorder()
+    service = alerts.AlertService(sender=sender.send, email_sender=None)
+    service.set_threshold(user_id="u8", amount=1, recipient="u8@local")
+
+    service.record_usage(user_id="u8", amount=10)
+
+    assert len(sender.sent) == 1
